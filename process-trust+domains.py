@@ -10,18 +10,22 @@ ip_addrs = []
 unique_domains = []
 subdomain_groups = {}
 redir_ip = "127.0.1.1"
+outdir = os.path.realpath('outdir')
 
+## TODO use getopt
 if len(sys.argv) == 1:
-    sys.stderr.write("usage: {} domains-file output-conf-dir <redirect-address>\n".format(sys.argv[0]))
+    sys.stderr.write("usage: {} domains-file <output-conf-dir> <redirect-address>\n".format(sys.argv[0]))
     exit(1)
-if not os.path.isfile(os.path.realpath(sys.argv[1])):
-    sys.stderr.write("input file doesn't exists\n")
-    exit(1)
-if not os.path.isdir(os.path.realpath(sys.argv[2])):
-    sys.stderr.write("output conf dir doesn't exists. creating it\n")
-    os.mkdir(os.path.realpath(sys.argv[2])
-if len(sys.argv) == 4:
-    redir_ip = sys.argv[3]
+else:
+    if not os.path.isfile(os.path.realpath(sys.argv[1])):
+        sys.stderr.write("input file doesn't exists\n")
+        exit(1)
+    if len(sys.argv) == 3 and not os.path.isdir(os.path.realpath(sys.argv[2])):
+        sys.stderr.write("output conf dir doesn't exists. creating it\n")
+        os.mkdir(os.path.realpath(sys.argv[2]))
+    elif os.path.isdir(outdir)
+    if len(sys.argv) == 4:
+        redir_ip = sys.argv[3]
 
 cmdline = shlex.split("sed -e '/^\*\./d' {} ".format(sys.argv[1]))
 try:
@@ -65,21 +69,21 @@ with open(cmdout[1], 'r') as infile:
             subdomain_groups[line_dom.registered_domain].append(line)
             #print("add to grp", line)
 os.remove(cmdout[1])
-g = open(os.path.join(os.path.realpath(sys.argv[2]), "unique_domains.conf"),'w')
+g = open(os.path.join(outdir, "unique_domains.conf"),'w')
 for d in unique_domains:
     g.write('local-zone: "' + d + '" redirect\n')
     g.write('local-data: "' + d + ' IN A ' + redir_ip + '"\n')
 
 for k in subdomain_groups.keys():
-    h = open(os.path.join(os.path.realpath(sys.argv[2]), '{}.conf'.format(k)),'w')
+    h = open(os.path.join(outdir, '{}.conf'.format(k)),'w')
     h.write('local-zone: "' + k + '" transparent\n')
     for d in subdoms[k]:
         h.write('local-data: "' + d + ' IN A ' + redir_ip + '"\n')
     h.close()
-_ = [print(d) for d in unique_domains]
-_ = [print(d) for d in ip_addrs]
-for k,v in subdomain_groups:
-    print("{} subdoms:")
-    for e in v:
-        print(e)
+#_ = [print(d) for d in unique_domains]
+#_ = [print(d) for d in ip_addrs]
+#for k,v in subdomain_groups:
+#    print("{} subdoms:")
+#    for e in v:
+#        print(e)
 
