@@ -23,7 +23,8 @@ else:
     if len(sys.argv) == 3 and not os.path.isdir(os.path.realpath(sys.argv[2])):
         sys.stderr.write("output conf dir doesn't exists. creating it\n")
         os.mkdir(os.path.realpath(sys.argv[2]))
-    elif os.path.isdir(outdir)
+    elif os.path.isdir(outdir):
+        os.mkdir(outdir)
     if len(sys.argv) == 4:
         redir_ip = sys.argv[3]
 
