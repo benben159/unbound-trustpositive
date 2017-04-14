@@ -24,31 +24,35 @@ if len(sys.argv) == 4:
     redir_ip = sys.argv[3]
 
 cmdline = shlex.split("sed -e '/^\*\./d' {} ".format(sys.argv[1]))
-cmdout = tempfile.mkstemp()
-cmd0 = subprocess.Popen(cmdline, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-cmd1 = subprocess.Popen(["sort"], stdin=cmd0.stdout, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-cmd2 = subprocess.Popen(["uniq"], stdin=cmd1.stdout, stdout=cmdout[0], stderr=subprocess.STDOUT)
-cmd0.wait()
-cmd1.wait()
-cmd2.wait()
+try:
+    cmdout = tempfile.mkstemp()
+    cmd0 = subprocess.Popen(cmdline, stdout=subprocess.PIPE, stderr=subprocess.STDERR)
+    cmd1 = subprocess.Popen(["sort"], stdin=cmd0.stdout, stdout=subprocess.PIPE, stderr=subprocess.STDERR)
+    cmd2 = subprocess.Popen(["uniq"], stdin=cmd1.stdout, stdout=cmdout[0], stderr=subprocess.STDERR)
+    cmd0.wait()
+    cmd1.wait()
+    cmd2.wait()
+except OSError as oe:
+    sys.stderr.write("an error occurred", oe)
+    exit(1)
 
 with open(cmdout[1], 'r') as infile:
     progres = []
     for line in infile:
-        #if line.startswith('*.'):
-        #    continue
         line = line.strip()
         p = line[0]
         if p not in progres:
             print(p)
             progres.append(p)
         try:
-            ipaddress.ip_address(line)
+            _ = ipaddress.ip_address(line)
             ip_addrs.append(line)
             continue
         except ValueError:
             pass
         line_dom = tldextract.extract(line)
+        # uncomment the print statements to do some debugging
+        # WARNING: will generate a big f**king bunch of output
         if line_dom.registered_domain not in unique_domains and \
            line_dom.registered_domain not in subdomain_groups.keys():
             unique_domains.append(line_dom.registered_domain)
@@ -56,7 +60,7 @@ with open(cmdout[1], 'r') as infile:
         else:
             if line_dom.registered_domain in unique_domains:
                 unique_domains.remove(line_dom.registered_domain)
-            #    print("create dom grp", line_dom.registered_domain)
+                #print("create dom grp", line_dom.registered_domain)
                 subdomain_groups[line_dom.registered_domain] = []
             subdomain_groups[line_dom.registered_domain].append(line)
             #print("add to grp", line)
