@@ -21,9 +21,9 @@ else:
         sys.stderr.write("input file doesn't exists\n")
         exit(1)
     if len(sys.argv) == 3 and not os.path.isdir(os.path.realpath(sys.argv[2])):
+        outdir = os.path.realpath(sys.argv[2])
+    if os.path.isdir(outdir):
         sys.stderr.write("output conf dir doesn't exists. creating it\n")
-        os.mkdir(os.path.realpath(sys.argv[2]))
-    elif os.path.isdir(outdir):
         os.mkdir(outdir)
     if len(sys.argv) == 4:
         redir_ip = sys.argv[3]
@@ -31,14 +31,14 @@ else:
 cmdline = shlex.split("sed -e '/^\*\./d' {} ".format(sys.argv[1]))
 try:
     cmdout = tempfile.mkstemp()
-    cmd0 = subprocess.Popen(cmdline, stdout=subprocess.PIPE, stderr=subprocess.STDERR)
-    cmd1 = subprocess.Popen(["sort"], stdin=cmd0.stdout, stdout=subprocess.PIPE, stderr=subprocess.STDERR)
-    cmd2 = subprocess.Popen(["uniq"], stdin=cmd1.stdout, stdout=cmdout[0], stderr=subprocess.STDERR)
+    cmd0 = subprocess.Popen(cmdline, stdout=subprocess.PIPE)
+    cmd1 = subprocess.Popen(["sort"], stdin=cmd0.stdout, stdout=subprocess.PIPE)
+    cmd2 = subprocess.Popen(["uniq"], stdin=cmd1.stdout, stdout=cmdout[0])
     cmd0.wait()
     cmd1.wait()
     cmd2.wait()
 except OSError as oe:
-    sys.stderr.write("an error occurred", oe)
+    sys.stderr.write("an error occurred: " + str(oe) + '\n')
     exit(1)
 
 with open(cmdout[1], 'r') as infile:
@@ -78,9 +78,13 @@ for d in unique_domains:
 for k in subdomain_groups.keys():
     h = open(os.path.join(outdir, '{}.conf'.format(k)),'w')
     h.write('local-zone: "' + k + '" transparent\n')
-    for d in subdoms[k]:
+    for d in subdomain_groups[k]:
         h.write('local-data: "' + d + ' IN A ' + redir_ip + '"\n')
     h.close()
+h = open(os.path.join(outdir, "ipaddress.txt"), 'w')
+_ = [h.write(ip + '\n') for ip in ip_addrs]
+h.close()
+g.close()
 #_ = [print(d) for d in unique_domains]
 #_ = [print(d) for d in ip_addrs]
 #for k,v in subdomain_groups:
