@@ -1,0 +1,12 @@
+1. hilangkan entri dengan wildcard '*.'
+$ egrep -v '^\*\.' $domains_file | sort | uniq > $blablabla
+2. apakah berisi ip address?
+  a. jika ya, filter ip address ke file terpisah
+3. apakah ada yang memiliki registered_domain (ref: tldextract) yang sama?
+  a. jika ya, kelompokkan setiap entri berdasarkan registered_domain
+   something.abc.de
+   something-else.abc.de
+   ++++++++++++++++++++++==> dikelompokkan menjadi satu
+3. proses menjadi file konfigurasi unbound:
+ a. untuk domain yang unik saja, langsung dipukul rata dengan direktif `local-zone: redirect`
+ b. untuk subdomain-subdomain di bawah domain hosting umum (blogspot.com, free.fr, dll) menggunakan direktif `local-zone: transparent` 
