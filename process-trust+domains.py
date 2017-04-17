@@ -8,7 +8,7 @@ import ipaddress
 
 ip_addrs = []
 unique_domains = []
-subdomain_groups = {}
+domain_groups = {}
 redir_ip = "127.0.1.1"
 outdir = os.path.realpath('outdir')
 
@@ -58,38 +58,29 @@ with open(cmdout[1], 'r') as infile:
         except ValueError:
             pass
         line_dom = tldextract.extract(line)
-        # uncomment the print statements below this blocks to do some debugging
-        # WARNING: will generate a big f**king bunch of output
-        if line_dom.registered_domain not in unique_domains and \
-           line_dom.registered_domain not in subdomain_groups.keys():
-            unique_domains.append(line_dom.registered_domain)
-            #print(line_dom.registered_domain + " unique")
-        else:
-            if line_dom.registered_domain in unique_domains:
-                unique_domains.remove(line_dom.registered_domain)
-                #print("create dom grp", line_dom.registered_domain)
-                subdomain_groups[line_dom.registered_domain] = []
-            subdomain_groups[line_dom.registered_domain].append(line)
-            #print("add to grp", line)
+        if line_dom.registered_domain not in domain_groups.keys():
+            #print("create dom grp", line_dom.registered_domain)
+            domain_groups[line_dom.registered_domain] = []
+        domain_groups[line_dom.registered_domain].append(line)
+        #print("add to grp", line)
 os.remove(cmdout[1])
 g = open(os.path.join(outdir, "unique_domains.conf"),'w')
-for d in unique_domains:
-    g.write('local-zone: "' + d + '" redirect\n')
-    g.write('local-data: "' + d + ' IN A ' + redir_ip + '"\n')
-
-for k in subdomain_groups.keys():
-    h = open(os.path.join(outdir, '{}.conf'.format(k)),'w')
-    h.write('local-zone: "' + k + '" transparent\n')
-    for d in subdomain_groups[k]:
-        h.write('local-data: "' + d + ' IN A ' + redir_ip + '"\n')
-    h.close()
+for k, v in domain_groups.items():
+    if len(v) == 1:
+        g.write('local-zone: "' + v[0] + '" redirect\n')
+        g.write('local-data: "' + v[0] + ' IN A ' + redir_ip + '"\n')
+    else:
+        h = open(os.path.join(outdir, '{}.conf'.format(k)),'w')
+        h.write('local-zone: "' + k + '" transparent\n')
+        for d in domain_groups[k]:
+            h.write('local-data: "' + d + ' IN A ' + redir_ip + '"\n')
+        h.close()
 h = open(os.path.join(outdir, "ipaddress.txt"), 'w')
 _ = [h.write(ip + '\n') for ip in ip_addrs]
 h.close()
 g.close()
-#_ = [print(d) for d in unique_domains]
 #_ = [print(d) for d in ip_addrs]
-#for k,v in subdomain_groups:
+#for k,v in domain_groups:
 #    print("{} subdoms:")
 #    for e in v:
 #        print(e)
