@@ -24,8 +24,8 @@ def usage():
                            with redirect directive
                         2: create a '.' local-zone with transparent directive 
                            (default)
- NOTE: first strategy's output configuration will render unbound to use much more
-       memory. 
+ NOTE: first strategy's output configuration will render unbound to use much
+       more memory. 
 """.format(sys.argv[0]))
     exit(1)
 
