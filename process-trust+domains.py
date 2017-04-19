@@ -35,22 +35,6 @@ outdir = os.path.realpath('outdir')
 infile = None
 verbose = False
 strategy = 2
-## TODO use getopt
-#if len(sys.argv) == 1:
-#    sys.stderr.write("usage: {} domains-file <output-conf-dir> <redirect-address>\n".format(sys.argv[0]))
-#    exit(1)
-#else:
-#    if not os.path.isfile(os.path.realpath(sys.argv[1])):
-#        sys.stderr.write("input file doesn't exists\n")
-#        exit(1)
-#    if len(sys.argv) == 3:
-#        outdir = os.path.realpath(sys.argv[2])
-#    if not os.path.isdir(outdir):
-#        sys.stderr.write("output conf dir doesn't exists. creating it\n")
-#        os.mkdir(outdir)
-#    if len(sys.argv) == 4:
-#        redir_ip = sys.argv[3]
-
 ## argument processing ##
 if len(sys.argv) == 1:
     usage()
@@ -138,9 +122,4 @@ for k, v in domain_groups.items():
         h.close()
 g.close()
 print("done")
-#_ = [print(d) for d in ip_addrs]
-#for k,v in domain_groups:
-#    print("{} subdoms:")
-#    for e in v:
-#        print(e)
 
