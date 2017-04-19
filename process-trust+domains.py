@@ -39,7 +39,7 @@ strategy = 2
 if len(sys.argv) == 1:
     usage()
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "vf:d:r:s:", ["infile", "output-dir", "redirect-addr", "verbose","strategy"])
+    opts, args = getopt.getopt(sys.argv[1:], "hvf:d:r:s:", ["help", "usage", "infile", "output-dir", "redirect-addr", "verbose","strategy"])
     for opt, arg in opts:
         if opt in ('-h', '--help', '--usage'):
             usage()
@@ -61,7 +61,7 @@ try:
         sys.stderr.write("output conf dir doesn't exists. creating it\n")
         os.mkdir(outdir)
 except getopt.GetoptError as ge:
-    sys.stderr.print("option error"+ str(ge) + '\n')
+    sys.stderr.write("error "+ str(ge) + '\n')
     usage()
 
 ## input file cleanup ##
