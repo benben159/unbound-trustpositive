@@ -1,6 +1,22 @@
 # unbound-trustpositive
 process trustpositive blacklist file into unbound configuration. this script uses Python 3 
-
+```
+usage: ./process-trust+domains.py -f|--infile domains-file
+  -f|--infile         input file from trustpositif.kominfo.go.id (mandatory)
+  -d|--output-dir     set directory for output configuration files 
+                      (default: subdirectory `outdir` of current directory)
+  -r|--redirect-addr  set redirect address (default: 127.0.1.1)
+  -v|--verbose        verbose output (will create a bunch of output, default is
+                      silent and just print simple progress)
+  -s|--strategy       set configuration build strategy:
+                        1: for each domain that should be blocked with 
+                           any of its unlisted subdomains, create a local-zone
+                           with redirect directive
+                        2: create a '.' local-zone with transparent directive 
+                           (default)
+ NOTE: first strategy's output configuration will render unbound to use much
+       more memory. 
+```
 ## how to use
 
 1. clone the repository
