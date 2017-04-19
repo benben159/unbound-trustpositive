@@ -13,3 +13,13 @@ process trustpositive blacklist file into unbound configuration
 2. download the blacklist file
 
 ```
+    $ wget "http://trustpositif.kominfo.go.id/files/downloads/index.php?dir=database%2Fblacklist%2Fpengaduan%2F\&download=domains"
+```
+
+3. process the downloaded file using `process-trust+domains.py` script
+
+```
+    $ ./process-trust+domains.py -f domains
+```
+
+for more information, see `./process-trust+domains.py --help`
