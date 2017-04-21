@@ -87,7 +87,7 @@ with open(cmdout[1], 'r') as infile:
         line = line.strip()
         p = line[0]
         if p not in progres:
-            print(p + ', ', end='')
+            print(p)
             progres.append(p)
         try:
             _ = ipaddress.ip_address(line)
