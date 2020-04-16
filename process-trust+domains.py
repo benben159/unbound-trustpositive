@@ -84,7 +84,7 @@ h = open(os.path.join(outdir, "ipaddress.txt"), 'w')
 with open(cmdout[1], 'r') as infile:
     progres = []
     for line in infile:
-        line = line.strip()
+        line = line.strip().lower()
         p = line[0]
         if p not in progres:
             print(p)
