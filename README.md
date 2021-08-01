@@ -1,7 +1,7 @@
 # unbound-trustpositive
-process [trustpositif](http://trustpositif.kominfo.go.id) blacklist file into unbound configuration. this script uses Python 3 
+process [trustpositif](http://trustpositif.kominfo.go.id) blacklist file into unbound recursive DNS server configuration. this script uses Python 3 
 ```
-usage: ./process-trust+domains.py -f|--infile domains-file
+usage: ./generate-config.py -f|--infile domains-file
   -f|--infile         input file from trustpositif.kominfo.go.id (mandatory)
   -d|--output-dir     set directory for output configuration files 
                       (default: subdirectory `outdir` of current directory)
@@ -26,31 +26,35 @@ usage: ./process-trust+domains.py -f|--infile domains-file
     $ cd unbound-trustpositive
 ```
 
-2. download the blacklist file
+1. create virtualenv on the directory and activate it (NOTE: replace `virtualenv3` command with appropriate command)
 
 ```
-    $ wget -O domains http://trustpositif.kominfo.go.id/files/downloads/index.php?dir=database%2Fblacklist%2Fpengaduan%2F\&download=domains
+    $ virtualenv3 .
+    $ source bin/activate
 ```
 
-3. process the downloaded file using `process-trust+domains.py` script
+1. install required dependency using `pip`
 
 ```
-    $ ./process-trust+domains.py -f domains
+    $ pip install -r requirements.txt
 ```
 
-for more information, see `./process-trust+domains.py --help`
-
-## dependency preparation
-
-this python script requires `tldextract` module. you can use `pip` to install
-the module with `pip3 install tldextract`. if you install the module without
-virtualenv or such thing, you must prepare the module with this terminal commands:
+1. download the blacklist file
 
 ```
-    $ sudo python3
-    ### this will run python3 with root privilege, which is not recommended.
-    ### but the bug is in tldextract module
-    >>> import tldextract
-    >>> tldextract.extract('www.google.com') # <-- this will initialize top-level domain list in the module directory
+    $ wget -O domains https://trustpositif.kominfo.go.id/assets/db/domains
 ```
 
+1. process the downloaded file using `generate-config.py` script
+
+```
+    $ ./generate-config.py -f domains
+```
+
+for more information, see `./generate-config.py --help`
+
+## todo
+
+* this program still depends on *NIX string manipulation utilities, such as `cat`, `sort`, and `uniq`. Actually it is good because that is the way we reuse existing apps on the OS and hopefully will reduce the amount of memory used in this program
+
+* the format of the `domains` file from trustpositif Kominfo is unpredictable, so there is a *big* chance for this program to fail
