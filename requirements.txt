@@ -1,8 +1,7 @@
 certifi==2019.11.28
 chardet==3.0.4
 idna==2.9
-pkg-resources==0.0.0
-requests==2.23.0
+requests==2.25.0
 requests-file==1.4.3
 six==1.14.0
 tldextract==2.2.2
